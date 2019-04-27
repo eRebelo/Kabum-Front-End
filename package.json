@@ -1,0 +1,53 @@
+{
+  "name": "kabum-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "npm": "6.6.0",
+    "node": "10.15.0"
+  },
+  "dependencies": {
+    "axios": "^0.15.3",
+    "axios-https-proxy-fix": "^0.17.1",
+    "bootstrap": "^4.2.1",
+    "font-awesome": "^4.7.0",
+    "moment": "^2.24.0",
+    "moment-duration-format": "^2.2.2",
+    "node-sass-chokidar": "^1.3.4",
+    "npm-run-all": "^4.1.2",
+    "react": "^16.2.0",
+    "react-bootstrap": "^1.0.0-beta.5",
+    "react-dom": "^16.2.0",
+    "react-modal": "^3.1.10",
+    "react-redux": "^5.0.6",
+    "react-redux-toastr": "^7.2.0",
+    "react-router": "^5.0.0",
+    "react-router-dom": "^5.0.0",
+    "react-scripts": "^2.1.1",
+    "react-spinners": "^0.2.5",
+    "react-timer-machine": "^1.0.2",
+    "reactstrap": "^7.1.0",
+    "redux": "^3.7.2",
+    "redux-form": "^7.2.1",
+    "redux-multi": "^0.1.12",
+    "redux-promise": "^0.5.3",
+    "redux-thunk": "^2.2.0"
+  },
+  "scripts": {
+    "start-js": "react-scripts start",
+    "start": "npm-run-all -p watch-css start-js",
+    "heroku-postbuild": "GENERATE_SOURCEMAP=false",
+    "build-js": "react-scripts build",
+    "build": "npm-run-all build-css build-js",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "build-css": "node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/",
+    "watch-css": "npm run build-css && node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/ --watch --recursive"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
