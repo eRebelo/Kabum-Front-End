@@ -1,4 +1,4 @@
-# StarQuiz Game
+# Kabum Front-End
 Aplicação desenvolvida em ReactJS & Redux.
 
 ----------
@@ -20,7 +20,7 @@ Aplicação desenvolvida em ReactJS & Redux.
 ----------
 
 ## Demo
-[StarQuiz Game][1]
+[Kabum Front-End][1]
 
 ----------
-[1]: https://starquiz-game.herokuapp.com/
+[1]: https://www.google.com/

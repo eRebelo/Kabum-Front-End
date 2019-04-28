@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { Redirect, Link } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom'
+import { reduxForm, Field } from 'redux-form'
 
-import { reduxForm, Field, formValueSelector, SubmissionError } from 'redux-form';
-import { Popover, Collapse } from 'react-bootstrap'
-import { cleanLoginForm } from './loginActions';
+import { Popover } from 'react-bootstrap'
+import Loading from '../../template/Loading'
+import { cleanLoginForm, login } from './loginActions';
 
 const required = value => (!value || !value.length) ? 'Campo obrigatório' : undefined;
-
 const renderTextField = ({ input, label, type, placeholder, meta: { touched, error }, ...rest }) => (
     <div>
         <input {...input} {...rest} label={label} type={type} placeholder={placeholder} className={'form-control ' + (touched && error ? 'error-input' : '')} />
@@ -23,47 +23,48 @@ class Login extends Component {
     }
 
     onSubmit = (values) => {
-        console.log(values);
+        this.props.login(values);
     }
 
     render() {
         if (this.props.isLogged) {
-            return <Redirect to="/customer" />
+            return <Redirect to='/customer' />
         }
 
         return (
             <div className='container'>
-                <div>Login</div>
-                <Link className='link-style-button-md' to={{ pathname: '/signup' }}>
-                    <button type='button' className='btn btn-dark wizard-button' action={this.props.signout}>Sign up</button>
-                </Link>
-                <Link className='link-style-button-md' to={{ pathname: '/customer' }}>
-                    <button type='button' className='btn btn-dark wizard-button' action={this.props.signout}>Clientes</button>
-                </Link>
 
-                <br></br>
-                <div class="login-container">
-                    <div class="login-wrap">
+                {this.props.loading && <Loading {...this.props.loading} />}
+
+                <div className='login-container'>
+                    <div className='login-wrap'>
                         <form onSubmit={this.props.handleSubmit(this.onSubmit)}>
                             <div className='row'>
                                 <div className='form-group col-md-12'>
-                                    <span class="login-form-title">Login</span>
+                                    <span className='login-form-title'>Login</span>
                                 </div>
                             </div>
                             <div className='row'>
                                 <div className='form-group col-md-12 login-wrap-input'>
-                                    <Field id='username' name='username' className='form-control' placeholder='Username'
+                                    <Field id='username' name='username' className='form-control' placeholder='Usuário'
                                         component={renderTextField} validate={required} style={{ height: '68px', padding: '0 25px 0 25px' }} />
                                 </div>
                             </div>
                             <div className='row'>
                                 <div className='form-group col-md-12'>
-                                    <Field id='password' name='password' className='form-control' placeholder='Password' type="password"
+                                    <Field id='password' name='password' className='form-control' placeholder='Senha' type='password'
                                         component={renderTextField} validate={required} style={{ height: '68px', padding: '0 25px 0 25px' }} />
                                 </div>
                             </div>
                             <div className='row'>
-                                <button type='submit' className='btn btn-dark' onClick={this.props.handleSubmit(this.onSubmit)}>Logar</button>
+                                <div className='form-group col-md-12'>
+                                    <button type='submit' className='btn login-form-btn' onClick={this.props.handleSubmit(this.onSubmit)}>Entrar</button>
+                                </div>
+                            </div>
+                            <div className='row'>
+                                <div className='form-group col-md-12 login-wrap-txt'>
+                                    <span className='login-txt'>Criar uma conta? <Link className='login-link' to={{ pathname: '/signup' }}>Cadastre-se</Link></span>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -75,12 +76,13 @@ class Login extends Component {
 
 function mapStateToProps(state) {
     return {
-        isLogged: state.app.loggedUser
+        loading: state.login.loading,
+        isLogged: state.login.loggedUser
     }
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({ cleanLoginForm }, dispatch)
+    return bindActionCreators({ cleanLoginForm, login }, dispatch)
 }
 
 Login = reduxForm({ form: 'loginForm', destroyOnUnmount: false })(Login);

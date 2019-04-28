@@ -1,3 +1,3 @@
 export default {
-    API_URL: 'https://swapi.co/api/people/?page=1'
+    API_URL: 'http://localhost:8093/kabum/api'
 }
