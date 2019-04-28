@@ -1,6 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import 'font-awesome/css/font-awesome.min.css'
 import '../assets/custom.css'
+import '../assets/plugins/react-table.css';
 
 import React, { Component } from 'react'
 import { connect } from 'react-redux'

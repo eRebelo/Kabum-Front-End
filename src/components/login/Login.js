@@ -5,7 +5,7 @@ import { Redirect, Link } from 'react-router-dom'
 import { reduxForm, Field } from 'redux-form'
 
 import { Popover } from 'react-bootstrap'
-import Loading from '../../template/Loading'
+import Loading from '../../loading/Loading'
 import { cleanLoginForm, login } from './loginActions';
 
 const required = value => (!value || !value.length) ? 'Campo obrigatório' : undefined;
