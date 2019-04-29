@@ -15,7 +15,6 @@ export const getCustomerList = () => {
         dispatch(loading())
         axios.get(`${consts.API_URL}/customer`)
             .then(resp => {
-                console.log(resp);
                 dispatch([
                     { type: 'CUSTOMER_LIST', payload: resp.data },
                     loading()
@@ -26,4 +25,70 @@ export const getCustomerList = () => {
                 dispatch(loading())
             })
     }
+}
+
+export const addCustomer = (customer) => {
+    return dispatch => {
+        dispatch(loading())
+        axios.post(`${consts.API_URL}/customer`, customer)
+            .then(resp => {
+                toastr.success('Sucesso', 'Cliente inserido com sucesso')
+                dispatch([
+                    resetForm('customerForm'),
+                    getCustomerList(),
+                    loading()
+                ])
+            })
+            .catch(error => {
+                toastr.error('Erro', 'Erro ao tentar inserir cliente')
+                dispatch(loading())
+            })
+    }
+}
+
+export const editCustomer = (customer) => {
+    return dispatch => {
+        dispatch(loading())
+        /* axios.put(`${consts.API_URL}/customer`, { ...customer }) */
+        axios.put(`${consts.API_URL}/customer`, customer)
+            .then(resp => {
+                toastr.success('Sucesso', 'Cliente alterado com sucesso')
+                dispatch([
+                    resetForm('customerForm'),
+                    getCustomerList(),
+                    loading()
+                ])
+            })
+            .catch(error => {
+                toastr.error('Erro', 'Erro ao tentar alterar cliente')
+                dispatch(loading())
+            })
+    }
+}
+
+export const removeCustomer = (customer) => {
+    return dispatch => {
+        dispatch(loading())
+        axios.delete(`${consts.API_URL}/customer/${customer.id}`)
+            .then(resp => {
+                toastr.success('Sucesso', 'Cliente removido com sucesso')
+                dispatch([
+                    getCustomerList(),
+                    loading()
+                ])
+            })
+            .catch(error => {
+                toastr.error('Erro', 'Erro ao tentar remover cliente')
+                dispatch(loading())
+            })
+    }
+}
+
+export const addCustomerToForm = (customer) => {
+    return initialize('customerForm', customer)
+}
+
+
+export const cleanCustomerForm = () => {
+    return initialize('customerForm', INITIAL_CUSTOMER_VALUES)
 }

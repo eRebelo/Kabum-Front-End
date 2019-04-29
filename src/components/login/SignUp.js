@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { Redirect, Link } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom'
 import { reduxForm, Field } from 'redux-form'
 
 import { Popover } from 'react-bootstrap'
 import Loading from '../../loading/Loading'
-import { cleanSignUpForm, signUp } from './loginActions';
+import { cleanSignUpForm, signUp } from './loginActions'
 
 const required = value => (!value || !value.length) ? 'Campo obrigatório' : undefined;
 const renderTextField = ({ input, label, type, placeholder, meta: { touched, error }, ...rest }) => (

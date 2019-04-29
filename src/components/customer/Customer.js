@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import ReactTable from 'react-table';
-import moment from 'moment';
+import ReactTable from 'react-table'
+import moment from 'moment'
+import CustomerRemoveModal from './modal/CustomerRemoveModal'
+import CustomerFormModal from './modal/CustomerFormModal'
 
 import Loading from '../../loading/Loading'
-import { signout } from '../login/loginActions';
-import { getCustomerList } from '../customer/customerActions';
+import { signout } from '../login/loginActions'
+import { getCustomerList, addCustomer, editCustomer, removeCustomer, cleanCustomerForm } from './customerActions'
 
 const tableHeaderStyle = { fontWeight: 'bold', textAlign: 'left' };
 const filterCaseInsensitive = (filter, row) => {
@@ -17,6 +19,8 @@ const filterDate = (filter, row) => {
     const id = filter.pivotId || filter.id;
     return row[id] !== undefined ? moment(filter.value).isSame(row[id].slice(0, 10)) : false;
 }
+const FORM_ADD = 'FORM_ADD';
+const FORM_EDIT = 'FORM_EDIT';
 
 class CustomerNavbar extends Component {
 
@@ -45,6 +49,10 @@ class Customer extends Component {
 
         this.state = {
             pageSize: Math.floor((window.innerHeight - 400) / 38),
+            showFormModal: false,
+            showRemoveModal: false,
+            formState: null,
+            customerDetails: null
         }
     }
 
@@ -64,6 +72,27 @@ class Customer extends Component {
     updatePageSize = () => {
         const pageSize = Math.floor((window.innerHeight - 500) / 38);
         this.setState({ pageSize: pageSize > 8 ? pageSize : 8 });
+    }
+
+    formAdd = () => {
+        this.props.cleanCustomerForm();
+        this.setState({
+            showFormModal: true,
+            formState: FORM_ADD,
+        });
+    }
+
+    formEdit(customer) {
+        this.setState({
+            showFormModal: true,
+            formState: FORM_EDIT,
+            customerDetails: customer
+        });
+    }
+
+    removeCustomer = () => {
+        this.props.removeCustomer(this.state.customerDetails);
+        this.setState({ custumerDetails: null });
     }
 
     render() {
@@ -110,12 +139,12 @@ class Customer extends Component {
                 Cell: row => {
                     return (
                         <div>
-                            <button className='btn btn-xs action-buttons ctm-table-button'
-                                title='Alterar' /* onClick={() => { this.setState({ failureDetails: row.original, showFailureDetails: true }) }} */>
+                            <button className='btn btn-xs action-buttons ctm-table-button' title='Alterar'
+                                onClick={() => this.formEdit(row.original)}>
                                 <i className='fa fa-edit'></i>
                             </button>
-                            <button className='btn btn-xs action-buttons ctm-table-button'
-                                title='Remover' /* onClick={() => { this.setState({ failureDetails: row.original, showFailureDetails: true }) }} */>
+                            <button className='btn btn-xs action-buttons ctm-table-button' title='Remover'
+                                onClick={() => { this.setState({ customerDetails: row.original, showRemoveModal: true }) }}>
                                 <i className='fa fa-trash-o'></i>
                             </button>
                         </div>
@@ -136,7 +165,7 @@ class Customer extends Component {
                         <div className="panel-body-header">
                             <div className='row'>
                                 <div className='col-md-12'>
-                                    <button type='button' className='btn btn-dark ctm-header-table-btn' /* onClick={this.props.signout} */>
+                                    <button type='button' className='btn btn-dark ctm-header-table-btn' onClick={() => this.formAdd()}>
                                         <i className='fa fa-plus'></i>&nbsp;&nbsp;Adicionar
                                      </button>
                                     <button type='button' className='btn btn-dark ctm-header-table-btn' onClick={() => this.props.getCustomerList()}>
@@ -167,6 +196,32 @@ class Customer extends Component {
                         </div>
                     </div>
                 </div>
+
+                { /* Modal for add a new customer */
+                    (this.state.showFormModal && this.state.formState === FORM_ADD) ? (
+                        <CustomerFormModal formState={FORM_ADD} confirmForm={() => this.setState({ showFormModal: false })}
+                            cancelForm={() => this.setState({ showFormModal: false })} closeForm={() => this.setState({ showFormModal: false })}
+                            closeOnEsc={true} closeButton={true} formModalTitle='Inserir Cliente' formModalButton='Adicionar'
+                            /* onSubmit={(values) => addCustomer({ ...values, changedBy: this.props.username })} */ />
+                    ) : null
+                }
+
+                { /* Modal for edit a customer  */
+                    (this.state.showFormModal && this.state.formState === FORM_EDIT) ? (
+                        <CustomerFormModal formState={FORM_EDIT} confirmForm={() => this.setState({ showFormModal: false })}
+                            cancelForm={() => this.setState({ showFormModal: false })} closeForm={() => this.setState({ showFormModal: false })}
+                            closeOnEsc={true} closeButton={true} customerToEdit={this.state.customerDetails}
+                            formModalTitle='Atualizar Cliente' formModalButton='Atualizar'
+                            /* onSubmit={(values) => editCustomer({ ...values, changedBy: this.props.username })} */ />
+                    ) : null
+                }
+
+                { /* Modal for remove a customer */
+                    this.state.showRemoveModal ? (
+                        <CustomerRemoveModal name={this.state.customerDetails.name} closeModal={() => this.setState({ showRemoveModal: false })}
+                            confirmAction={() => [this.setState({ showRemoveModal: false }), this.removeCustomer()]} />
+                    ) : null
+                }
             </div>
         )
     }
@@ -174,15 +229,13 @@ class Customer extends Component {
 
 function mapStateToProps(state) {
     return {
-        isLogged: state.login.loggedUser,
-        username: state.login.loggedUsername,
         loading: state.customer.loading,
         customerList: state.customer.list
     }
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({ signout, getCustomerList }, dispatch)
+    return bindActionCreators({ signout, getCustomerList, addCustomer, editCustomer, removeCustomer, cleanCustomerForm }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Customer)
