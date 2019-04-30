@@ -17,8 +17,7 @@ class Routes extends Component {
                 <Switch>
                     <Route path='/login' component={Login} />
                     <Route path='/signup' component={SignUp} />
-                    <Route path='/customer' component={Customer} />
-                    {/* <PrivateRoute path='/customer' component={Customer} isLogged={this.props.isLogged} /> */}
+                    <PrivateRoute path='/customer' component={Customer} isLogged={this.props.isLogged} />
                     <Redirect from='*' to='/customer' />
                 </Switch>
             </HashRouter>

@@ -4,6 +4,14 @@ import { reset as resetForm, initialize } from 'redux-form';
 import consts from '../../main/consts'
 
 const INITIAL_CUSTOMER_VALUES = {
+    name: null,
+    birthDate: null,
+    cpf: null,
+    rg: null,
+    changeDate: null,
+    creationDate: null,
+    changedBy: null,
+    customerAddresses: []
 }
 
 export const loading = () => {
@@ -49,7 +57,6 @@ export const addCustomer = (customer) => {
 export const editCustomer = (customer) => {
     return dispatch => {
         dispatch(loading())
-        /* axios.put(`${consts.API_URL}/customer`, { ...customer }) */
         axios.put(`${consts.API_URL}/customer`, customer)
             .then(resp => {
                 toastr.success('Sucesso', 'Cliente alterado com sucesso')

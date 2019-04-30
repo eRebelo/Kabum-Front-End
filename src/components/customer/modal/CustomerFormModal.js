@@ -51,16 +51,18 @@ class CustomerFormModal extends Component {
 
     componentWillMount() {
         if (this.props.formState === 'FORM_EDIT') {
+            var copyCustomerToEdit = JSON.parse(JSON.stringify(this.props.customerToEdit));
+
             // Convert the date and time format
-            this.props.customerToEdit.birthDate = this.convertToFriendlyDateFormat(this.props.customerToEdit.birthDate);
-            this.props.customerToEdit.creationDate = this.convertToFriendlyDateTimeFormat(this.props.customerToEdit.creationDate);
-            this.props.customerToEdit.changeDate = this.convertToFriendlyDateTimeFormat(this.props.customerToEdit.changeDate);
+            copyCustomerToEdit.birthDate = this.convertToFriendlyDateFormat(copyCustomerToEdit.birthDate);
+            copyCustomerToEdit.creationDate = this.convertToFriendlyDateTimeFormat(copyCustomerToEdit.creationDate);
+            copyCustomerToEdit.changeDate = this.convertToFriendlyDateTimeFormat(copyCustomerToEdit.changeDate);
 
             // Set the customer addresses object
-            this.setState({ listCustomerAddress: this.props.customerToEdit.customerAddresses });
+            this.setState({ listCustomerAddress: copyCustomerToEdit.customerAddresses });
 
             // Initializing form
-            this.props.addCustomerToForm(this.props.customerToEdit);
+            this.props.addCustomerToForm(copyCustomerToEdit);
         }
         // Building the select options for State
         this.createStateOptions();

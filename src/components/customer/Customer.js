@@ -5,7 +5,6 @@ import ReactTable from 'react-table'
 import moment from 'moment'
 import CustomerRemoveModal from './modal/CustomerRemoveModal'
 import CustomerFormModal from './modal/CustomerFormModal'
-
 import Loading from '../../loading/Loading'
 import { signout } from '../login/loginActions'
 
