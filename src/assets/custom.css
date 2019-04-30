@@ -207,6 +207,11 @@ input.login-input {
 .ctm-table-button:active {
   box-shadow: none; }
 
+.ctm-address-btn {
+  font-size: 14px;
+  width: 62%;
+  float: right; }
+
 /* End Customer */
 /* Data Table */
 .action-buttons {
@@ -239,7 +244,8 @@ input.login-input {
 
 h5.heading {
   border-bottom: 1px solid #d2d6de;
-  font-weight: 400; }
+  font-weight: 400;
+  margin-top: 2%; }
 
 .historic-button {
   padding: 4px 12px;

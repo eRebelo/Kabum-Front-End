@@ -8,15 +8,6 @@ import { createTextMask } from 'redux-form-input-masks';
 
 import { addCustomerToForm, addCustomer, editCustomer, validateCPF } from '../customerActions'
 
-import DateTimePicker from 'react-widgets/lib/DateTimePicker'
-import moment from 'moment'
-import momentLocalizer from 'react-widgets-moment'
-import 'moment/locale/pt-br';
-import 'react-widgets/dist/css/react-widgets.css'
-
-moment.locale('pt-br')
-momentLocalizer()
-
 const required = value => (!value || !value.length) ? 'Campo obrigatório' : undefined;
 const renderTextField = ({ input, label, type, placeholder, meta: { touched, error }, ...rest }) => (
     <div>
@@ -24,12 +15,19 @@ const renderTextField = ({ input, label, type, placeholder, meta: { touched, err
         {touched && (error && <Popover id='popover-error' placement='top'>{error}</Popover>)}
     </div>
 );
+const renderSelectField = ({ input, meta: { touched, error }, children, ...rest }) => (
+    <div>
+        <div>
+            <select {...input} {...rest} className={'form-control ' + (touched && error ? 'error-input' : '')}>
+                {children}
+            </select>
+            {touched && (error && <Popover id='popover-error' placement='top'>{error}</Popover>)}
+        </div>
+    </div>
+);
 const cpf = value => (value && !validateCPF(value)) ? 'CPF inválido' : undefined;
 const cpfMask = createTextMask({ pattern: '999.999.999-99', guide: false });
-
-const renderDateTimePicker = ({ input: { onChange, value }, placeholder, showTime }) => (
-    <DateTimePicker placeholder={placeholder} onChange={onChange} format="DD/MM/YYYY" time={showTime} value={!value ? null : new Date(value)} />
-);
+const cepMask = createTextMask({ pattern: '99999-999', guide: false });
 
 class CustomerFormModal extends Component {
     constructor(props) {
@@ -39,18 +37,33 @@ class CustomerFormModal extends Component {
             showModal: true,
             errors: false,
             openAddressToggle: true,
-            openHistoricToggle: true
+            openHistoricToggle: true,
+            listCustomerAddress: [],
+            streetAddress: '',
+            number: '',
+            neighborhood: '',
+            state: '',
+            city: '',
+            zipCode: '',
+            complement: ''
         }
     }
 
     componentWillMount() {
         if (this.props.formState === 'FORM_EDIT') {
-            this.props.customerToEdit.creationDate = this.convertToFriendlyDateFormat(this.props.customerToEdit.creationDate);
-            this.props.customerToEdit.changeDate = this.convertToFriendlyDateFormat(this.props.customerToEdit.changeDate);
+            // Convert the date and time format
+            this.props.customerToEdit.birthDate = this.convertToFriendlyDateFormat(this.props.customerToEdit.birthDate);
+            this.props.customerToEdit.creationDate = this.convertToFriendlyDateTimeFormat(this.props.customerToEdit.creationDate);
+            this.props.customerToEdit.changeDate = this.convertToFriendlyDateTimeFormat(this.props.customerToEdit.changeDate);
+
+            // Set the customer addresses object
+            this.setState({ listCustomerAddress: this.props.customerToEdit.customerAddresses });
 
             // Initializing form
             this.props.addCustomerToForm(this.props.customerToEdit);
         }
+        // Building the select options for State
+        this.createStateOptions();
     }
 
     /* Function that performs an action when to press a key */
@@ -67,24 +80,12 @@ class CustomerFormModal extends Component {
         this.props.cancelForm();
     }
 
-    onSubmit = (values) => {
-        console.log(values);
-
-        if (this.props.formState === 'FORM_ADD') {
-            this.setState({ showModal: false });
-            this.props.confirmForm();
-            this.props.addCustomer({ ...values, changedBy: this.props.username });
-        } else {
-            values.creationDate = this.convertToOriginalDateFormat(values.creationDate);
-            values.changeDate = this.convertToOriginalDateFormat(values.changeDate);
-
-            this.setState({ showModal: false })
-            this.props.confirmForm();
-            this.props.editCustomer({ ...values, changedBy: this.props.username });
-        }
+    convertToFriendlyDateFormat = (originalDate) => {
+        let dates = originalDate.split("T");
+        return dates[0];
     }
 
-    convertToFriendlyDateFormat = (originalDate) => {
+    convertToFriendlyDateTimeFormat = (originalDate) => {
         let time2Date1 = originalDate.split("+");
         let timesDate2 = time2Date1[0].split("T");
         let date = timesDate2[0].split("-");
@@ -92,11 +93,91 @@ class CustomerFormModal extends Component {
         return originalDate;
     }
 
-    convertToOriginalDateFormat = (originalDate) => {
+    convertToOriginalDateTimeFormat = (originalDate) => {
         let timesDate1 = originalDate.split(" ");
         let timesDate2 = timesDate1[0].split("/");
         originalDate = timesDate2[2] + "-" + timesDate2[1] + "-" + timesDate2[0] + "T" + timesDate1[1];
         return originalDate;
+    }
+
+    createStateOptions = () => {
+        this.selectState = [
+            { value: 'AC', text: 'Acre' },
+            { value: 'AL', text: 'Alagoas' },
+            { value: 'AP', text: 'Amapá' },
+            { value: 'AM', text: 'Amazonas' },
+            { value: 'BA', text: 'Bahia' },
+            { value: 'CE', text: 'Ceará' },
+            { value: 'DF', text: 'Distrito Federal' },
+            { value: 'ES', text: 'Espírito Santo' },
+            { value: 'GO', text: 'Goiás' },
+            { value: 'MA', text: 'Maranhão' },
+            { value: 'MT', text: 'Mato Grosso' },
+            { value: 'MS', text: 'Mato Grosso do Sul' },
+            { value: 'MG', text: 'Minas Gerais' },
+            { value: 'PA', text: ' Pará ' },
+            { value: 'PB', text: 'Paraíba' },
+            { value: 'PR', text: 'Paraná' },
+            { value: 'PE', text: 'Pernambuco' },
+            { value: 'PI', text: 'Piauí' },
+            { value: 'RJ', text: 'Rio de Janeiro' },
+            { value: 'RN', text: 'Rio Grande do Norte' },
+            { value: 'RS', text: 'Rio Grande do Sul' },
+            { value: 'RO', text: 'Rondônia' },
+            { value: 'RR', text: 'Roraima' },
+            { value: 'SC', text: 'Santa Catarina' },
+            { value: 'SP', text: 'São Paulo' },
+            { value: 'SE', text: 'Sergipe' },
+            { value: 'TO', text: 'Tocantins' }
+        ];
+    }
+
+    // Adding a new customer address
+    pushCustomerAddress = () => {
+        if (this.state.streetAddress.trim() !== '' && this.state.number.trim() !== '' && this.state.neighborhood.trim() !== ''
+            && this.state.state.trim() !== '' && this.state.city.trim() !== '' && this.state.zipCode.trim() !== '' && this.state.complement.trim() !== '') {
+
+            let tempListCustomerAddress = this.state.listCustomerAddress;
+            tempListCustomerAddress.push({
+                streetAddress: this.state.streetAddress.trim(),
+                number: parseInt(this.state.number.trim()),
+                neighborhood: this.state.neighborhood.trim(),
+                state: this.state.state.trim(),
+                city: this.state.city.trim(),
+                zipCode: this.state.zipCode.trim(),
+                complement: this.state.complement.trim()
+            });
+            this.setState({ listCustomerAddress: tempListCustomerAddress });
+
+            console.log(this.state.listCustomerAddress);
+
+            // Clean state and fields value of the customer address
+            this.setState({ streetAddress: '', number: '', neighborhood: '', state: '', city: '', zipCode: '', complement: '' });
+            this.props.change('streetAddress', '');
+            this.props.change('number', '');
+            this.props.change('neighborhood', '');
+            this.props.change('state', '');
+            this.props.change('city', '');
+            this.props.change('zipCode', '');
+            this.props.change('complement', '');
+        }
+    }
+
+    onSubmit = (values) => {
+        console.log(values);
+
+        if (this.props.formState === 'FORM_ADD') {
+            this.setState({ showModal: false });
+            this.props.confirmForm();
+            this.props.addCustomer({ ...values, customerAddresses: this.state.listCustomerAddress, changedBy: this.props.username });
+        } else {
+            values.creationDate = this.convertToOriginalDateTimeFormat(values.creationDate);
+            values.changeDate = this.convertToOriginalDateTimeFormat(values.changeDate);
+
+            this.setState({ showModal: false })
+            this.props.confirmForm();
+            this.props.editCustomer({ ...values, changedBy: this.props.username });
+        }
     }
 
     render() {
@@ -142,8 +223,8 @@ class CustomerFormModal extends Component {
                                     </div>
                                     <div className='form-group col-md-6'>
                                         <label htmlFor='birthDate'>Data de Nascimento</label>
-                                        <Field id='birthDate' name='birthDate' className='form-control' placeholder='Data de Nascimento' component={renderDateTimePicker} 
-                                        showTime={false} />
+                                        <Field id='birthDate' name='birthDate' className='form-control' placeholder='Data de Nascimento' component={renderTextField}
+                                            type='date' validate={required} />
                                     </div>
                                 </div>
 
@@ -159,17 +240,88 @@ class CustomerFormModal extends Component {
                                     </div>
                                 </div>
 
-                                {/* <div className='row'>
+                                <div className='row'>
                                     <div className='col-md-12 col-lg-12'>
-                                        <h4 className='heading'>Endereço
+                                        <h5 className='heading'>Endereço
                                             <div className='btn btn-default pull-right historic-button' onClick={() => this.setState({ openAddressToggle: !this.state.openAddressToggle })}>
                                                 {this.state.openAddressToggle ? (<span className='fa fa-chevron-up'></span>) : <span className='fa fa-chevron-down'></span>}
                                             </div>
-                                        </h4>
+                                        </h5>
                                     </div>
                                 </div>
                                 <Collapse in={this.state.openAddressToggle}>
-                                </Collapse> */}
+                                    <div>
+                                        { /* {this.props.netcoolFieldToEdit ? (
+                                            this.props.netcoolFieldToEdit.generalObs.map((e, key) => {
+                                                return (
+                                                    <div className='row' key={key}>
+                                                        <div className='form-group col-md-12 obs-group'>
+                                                            <p className='obs-p'>{e.description}</p><span className='fa fa-clock-o obs-span'> {e.creationDate}</span>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })
+                                        ) : this.state.generalObservation.map((e, key) => {
+                                            return (
+                                                <div className='row' key={key}>
+                                                    <div className='form-group col-md-12 obs-group'>
+                                                        <p className='obs-p'>{e.description}</p><span className='fa fa-clock-o obs-span'> {e.creationDate}</span>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })} */ }
+                                        <div className='row'>
+                                            <div className='form-group col-md-10'>
+                                                <Field id='streetAddress' name='streetAddress' className='form-control' placeholder='Logradouro' component={renderTextField}
+                                                    value={this.state.streetAddress} onChange={e => this.setState({ streetAddress: e.target.value })} />
+                                            </div>
+                                            <div className='form-group col-md-2'>
+                                                <Field id='number' name='number' className='form-control' placeholder='Número' component={renderTextField} type="number"
+                                                    value={this.state.number} onChange={e => this.setState({ number: e.target.value })} />
+                                            </div>
+                                        </div>
+                                        <div className='row'>
+                                            <div className='form-group col-md-4'>
+                                                <Field id='complement' name='complement' className='form-control' placeholder='Complemento' component={renderTextField}
+                                                    value={this.state.complement} onChange={e => this.setState({ complement: e.target.value })} />
+                                            </div>
+                                            <div className='form-group col-md-4'>
+                                                <Field id='zipCode' name='zipCode' className='form-control' placeholder='CEP' component={renderTextField} {...cepMask}
+                                                    value={this.state.zipCode} onChange={e => this.setState({ zipCode: e.target.value })} />
+                                            </div>
+                                            <div className='form-group col-md-4'>
+                                                <Field id='neighborhood' name='neighborhood' className='form-control' placeholder='Bairro' component={renderTextField}
+                                                    value={this.state.neighborhood} onChange={e => this.setState({ neighborhood: e.target.value })} />
+                                            </div>
+                                        </div>
+                                        <div className='row'>
+                                            <div className='form-group col-md-6'>
+                                                <Field id='city' name='city' className='form-control' placeholder='Cidade' component={renderTextField}
+                                                    value={this.state.city} onChange={e => this.setState({ city: e.target.value })} />
+                                            </div>
+                                            <div className='form-group col-md-6'>
+                                                <Field id='state' name='state' className='form-control' placeholder='Estado' component={renderSelectField}
+                                                    value={this.state.state} onChange={e => this.setState({ state: e.target.value })}>
+                                                    <option value='' disabled={true}>Selecione um Estado</option>
+                                                    {this.selectState.map((e, key) => {
+                                                        return <option key={key} value={e.value}>{e.text}</option>;
+                                                    })}
+                                                </Field>
+                                            </div>
+                                        </div>
+                                        <div className='row'>
+                                            <div className='form-group col-md-9'>
+                                                <span>Rua Joaquim Paulino da Costa, 51 - Machado-MG 37750-000</span><br />
+                                                <span>Rua Joaquim Paulino da Costa, 51 - Machado-MG 37750-000</span>
+                                            </div>
+                                            <div className='form-group col-md-3'>
+                                                <button type='button' className='btn btn-secondary ctm-address-btn' onClick={() => this.pushCustomerAddress()}>
+                                                    <i className='fa fa-plus'></i>&nbsp;&nbsp;Endereço
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Collapse>
 
                                 {this.props.formState === 'FORM_EDIT' ? (
                                     <div>
@@ -209,7 +361,7 @@ class CustomerFormModal extends Component {
                         </div>
                     </div>
                 </Modal>
-            </div>
+            </div >
         );
     }
 }

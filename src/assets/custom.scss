@@ -250,6 +250,11 @@ input.login-input {
   box-shadow: none;
 }
 
+.ctm-address-btn {
+  font-size: 14px;
+  width: 62%;
+  float: right;
+}
 /* End Customer */
 
 /* Data Table */
@@ -294,6 +299,7 @@ input.login-input {
 h5.heading {
   border-bottom: 1px solid #d2d6de;
   font-weight: 400;
+  margin-top: 2%;
 }
 
 .historic-button {
