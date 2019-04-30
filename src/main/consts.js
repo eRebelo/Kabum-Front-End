@@ -1,3 +1,3 @@
 export default {
-    API_URL: 'http://localhost:8093/kabum/api'
+    API_URL: 'http://localhost:8090/kabum/api'
 }
