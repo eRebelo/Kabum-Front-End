@@ -15,6 +15,14 @@ body {
   height: 2.2em;
 }
 
+.col-float-left {
+  float: left;
+}
+
+.col-float-right {
+  float: right;
+}
+
 /* End General */
 
 /* Tooltip */
@@ -252,9 +260,15 @@ input.login-input {
 
 .ctm-address-btn {
   font-size: 14px;
-  width: 62%;
+  width: 15%;
   float: right;
 }
+
+.ctm-address-rm-btn {
+  padding: 0.1rem 0.4rem;
+  font-size: 0.7rem;
+}
+
 /* End Customer */
 
 /* Data Table */
@@ -314,6 +328,31 @@ h5.heading {
 }
 
 /* End Modal */
+
+/* Address Panel */
+
+.history_box_group {
+  padding: 0.3rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  background-color: #f2f2f2;
+  height: 300px;
+  max-height: 100px;
+  font-size: 15px;
+  overflow-y: scroll;
+}
+
+.history_box_group .history_row {
+  padding-top: 0.55rem;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.history_box_group .history_row p {
+  margin: 0;
+}
+
+/* Address Panel End */
 
 .btn {
   margin-right: 5px;

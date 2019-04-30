@@ -135,7 +135,7 @@ class CustomerFormModal extends Component {
     // Adding a new customer address
     pushCustomerAddress = () => {
         if (this.state.streetAddress.trim() !== '' && this.state.number.trim() !== '' && this.state.neighborhood.trim() !== ''
-            && this.state.state.trim() !== '' && this.state.city.trim() !== '' && this.state.zipCode.trim() !== '' && this.state.complement.trim() !== '') {
+            && this.state.state.trim() !== '' && this.state.city.trim() !== '' && this.state.zipCode.trim() !== '') {
 
             let tempListCustomerAddress = this.state.listCustomerAddress;
             tempListCustomerAddress.push({
@@ -149,8 +149,6 @@ class CustomerFormModal extends Component {
             });
             this.setState({ listCustomerAddress: tempListCustomerAddress });
 
-            console.log(this.state.listCustomerAddress);
-
             // Clean state and fields value of the customer address
             this.setState({ streetAddress: '', number: '', neighborhood: '', state: '', city: '', zipCode: '', complement: '' });
             this.props.change('streetAddress', '');
@@ -163,9 +161,13 @@ class CustomerFormModal extends Component {
         }
     }
 
-    onSubmit = (values) => {
-        console.log(values);
+    removeCustomerAddress = (index) => {
+        let tempListCustomerAddress = this.state.listCustomerAddress;
+        tempListCustomerAddress.splice(index, 1);
+        this.setState({ listCustomerAddress: tempListCustomerAddress });
+    }
 
+    onSubmit = (values) => {
         if (this.props.formState === 'FORM_ADD') {
             this.setState({ showModal: false });
             this.props.confirmForm();
@@ -251,32 +253,33 @@ class CustomerFormModal extends Component {
                                 </div>
                                 <Collapse in={this.state.openAddressToggle}>
                                     <div>
-                                        { /* {this.props.netcoolFieldToEdit ? (
-                                            this.props.netcoolFieldToEdit.generalObs.map((e, key) => {
-                                                return (
-                                                    <div className='row' key={key}>
-                                                        <div className='form-group col-md-12 obs-group'>
-                                                            <p className='obs-p'>{e.description}</p><span className='fa fa-clock-o obs-span'> {e.creationDate}</span>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })
-                                        ) : this.state.generalObservation.map((e, key) => {
-                                            return (
-                                                <div className='row' key={key}>
-                                                    <div className='form-group col-md-12 obs-group'>
-                                                        <p className='obs-p'>{e.description}</p><span className='fa fa-clock-o obs-span'> {e.creationDate}</span>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })} */ }
                                         <div className='row'>
-                                            <div className='form-group col-md-10'>
-                                                <Field id='streetAddress' name='streetAddress' className='form-control' placeholder='Logradouro' component={renderTextField}
+                                            <div className='form-group col-md-12'>
+                                                <div className="history_box_group">
+                                                    {this.state.listCustomerAddress.map((item, key) => {
+                                                        return (
+                                                            <div className='row history_row' key={key}>
+                                                                <div className='form-group col-md-11 col-float-right'>
+                                                                    <p>{item.streetAddress}, {item.number}{item.complement !== '' ? ' (' + item.complement + ')' : null} - {item.neighborhood}, {item.city} - {item.state}, {item.zipCode}</p>
+                                                                </div>
+                                                                <div className=' form-group col-md-1 col-float-left'>
+                                                                    <button type='button' className='btn btn-danger ctm-address-rm-btn' onClick={() => this.removeCustomerAddress(key)}>
+                                                                        <i className='fa fa-times'></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className='row'>
+                                            <div className='form-group col-md-9'>
+                                                <Field id='streetAddress' name='streetAddress' className='form-control' placeholder='Logradouro*' component={renderTextField}
                                                     value={this.state.streetAddress} onChange={e => this.setState({ streetAddress: e.target.value })} />
                                             </div>
-                                            <div className='form-group col-md-2'>
-                                                <Field id='number' name='number' className='form-control' placeholder='Número' component={renderTextField} type="number"
+                                            <div className='form-group col-md-3'>
+                                                <Field id='number' name='number' className='form-control' placeholder='Número*' component={renderTextField} type="number"
                                                     value={this.state.number} onChange={e => this.setState({ number: e.target.value })} />
                                             </div>
                                         </div>
@@ -286,23 +289,23 @@ class CustomerFormModal extends Component {
                                                     value={this.state.complement} onChange={e => this.setState({ complement: e.target.value })} />
                                             </div>
                                             <div className='form-group col-md-4'>
-                                                <Field id='zipCode' name='zipCode' className='form-control' placeholder='CEP' component={renderTextField} {...cepMask}
+                                                <Field id='zipCode' name='zipCode' className='form-control' placeholder='CEP*' component={renderTextField} {...cepMask}
                                                     value={this.state.zipCode} onChange={e => this.setState({ zipCode: e.target.value })} />
                                             </div>
                                             <div className='form-group col-md-4'>
-                                                <Field id='neighborhood' name='neighborhood' className='form-control' placeholder='Bairro' component={renderTextField}
+                                                <Field id='neighborhood' name='neighborhood' className='form-control' placeholder='Bairro*' component={renderTextField}
                                                     value={this.state.neighborhood} onChange={e => this.setState({ neighborhood: e.target.value })} />
                                             </div>
                                         </div>
                                         <div className='row'>
                                             <div className='form-group col-md-6'>
-                                                <Field id='city' name='city' className='form-control' placeholder='Cidade' component={renderTextField}
+                                                <Field id='city' name='city' className='form-control' placeholder='Cidade*' component={renderTextField}
                                                     value={this.state.city} onChange={e => this.setState({ city: e.target.value })} />
                                             </div>
                                             <div className='form-group col-md-6'>
-                                                <Field id='state' name='state' className='form-control' placeholder='Estado' component={renderSelectField}
+                                                <Field id='state' name='state' className='form-control' component={renderSelectField}
                                                     value={this.state.state} onChange={e => this.setState({ state: e.target.value })}>
-                                                    <option value='' disabled={true}>Selecione um Estado</option>
+                                                    <option value='' disabled={true}>Selecione um Estado*</option>
                                                     {this.selectState.map((e, key) => {
                                                         return <option key={key} value={e.value}>{e.text}</option>;
                                                     })}
@@ -310,11 +313,7 @@ class CustomerFormModal extends Component {
                                             </div>
                                         </div>
                                         <div className='row'>
-                                            <div className='form-group col-md-9'>
-                                                <span>Rua Joaquim Paulino da Costa, 51 - Machado-MG 37750-000</span><br />
-                                                <span>Rua Joaquim Paulino da Costa, 51 - Machado-MG 37750-000</span>
-                                            </div>
-                                            <div className='form-group col-md-3'>
+                                            <div className='form-group col-md-12'>
                                                 <button type='button' className='btn btn-secondary ctm-address-btn' onClick={() => this.pushCustomerAddress()}>
                                                     <i className='fa fa-plus'></i>&nbsp;&nbsp;Endereço
                                                 </button>
