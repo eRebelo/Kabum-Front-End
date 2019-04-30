@@ -26,9 +26,12 @@
     "react-spinners": "^0.2.5",
     "react-table": "^6.8.6",
     "react-timer-machine": "^1.0.2",
+    "react-widgets": "^4.4.10",
+    "react-widgets-moment": "^4.0.26",
     "reactstrap": "^7.1.0",
     "redux": "^3.7.2",
     "redux-form": "^7.2.1",
+    "redux-form-input-masks": "^2.0.1",
     "redux-multi": "^0.1.12",
     "redux-promise": "^0.5.3",
     "redux-thunk": "^2.2.0"

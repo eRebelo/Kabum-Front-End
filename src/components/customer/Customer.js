@@ -8,7 +8,8 @@ import CustomerFormModal from './modal/CustomerFormModal'
 
 import Loading from '../../loading/Loading'
 import { signout } from '../login/loginActions'
-import { getCustomerList, addCustomer, editCustomer, removeCustomer, cleanCustomerForm } from './customerActions'
+
+import { getCustomerList, removeCustomer, cleanCustomerForm } from './customerActions'
 
 const tableHeaderStyle = { fontWeight: 'bold', textAlign: 'left' };
 const filterCaseInsensitive = (filter, row) => {
@@ -19,6 +20,7 @@ const filterDate = (filter, row) => {
     const id = filter.pivotId || filter.id;
     return row[id] !== undefined ? moment(filter.value).isSame(row[id].slice(0, 10)) : false;
 }
+
 const FORM_ADD = 'FORM_ADD';
 const FORM_EDIT = 'FORM_EDIT';
 
@@ -96,7 +98,6 @@ class Customer extends Component {
     }
 
     render() {
-
         const columns = [
             {
                 filterable: true,
@@ -235,7 +236,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({ signout, getCustomerList, addCustomer, editCustomer, removeCustomer, cleanCustomerForm }, dispatch)
+    return bindActionCreators({ signout, getCustomerList, removeCustomer, cleanCustomerForm }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Customer)
