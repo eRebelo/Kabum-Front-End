@@ -12,6 +12,11 @@ Aplicação desenvolvida em ReactJS & Redux.
 
 ----------
 
+## Endpoint Back-End API
+Arquivo [consts.js][1]
+
+----------
+
 ## Executar Aplicação
 ```bash
   npm start
@@ -19,8 +24,15 @@ Aplicação desenvolvida em ReactJS & Redux.
 
 ----------
 
-## Demo
-[Kabum Front-End][1]
+## Testar Execução
+URL: http://localhost:3000
 
 ----------
-[1]: https://www.google.com/
+
+## Demo
+[Kabum Front-End][2]
+
+----------
+
+[1]: https://github.com/eRebelo/Kabum-Front-End/blob/master/src/main/consts.js
+[2]: https://kabum.herokuapp.com
