@@ -18,6 +18,13 @@ class App extends Component {
       <div className='body'>
         <Routes />
         <MessagesToastr />
+        <div className='footer'>
+          Kabum API © 2019&nbsp;
+          <strong>
+            <a className='login-link' href='https://www.linkedin.com/in/eduardo-rebelo' target='_blank' rel='noopener noreferrer'>Eduardo Rebelo</a>
+          </strong>
+        </div>
+
       </div>
     )
   }

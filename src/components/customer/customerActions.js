@@ -1,4 +1,4 @@
-import axios from 'axios-https-proxy-fix'
+import axios from 'axios'
 import { toastr } from 'react-redux-toastr';
 import { reset as resetForm, initialize } from 'redux-form';
 import consts from '../../main/consts'
